@@ -1,14 +1,12 @@
-# print_card.py
+from carta import Carta, Naipe, Valores  # seus Enums
+from print_card_copy  import imprime_espaco_vazio
 
-class Carta:
-    def __init__(self, valor, naipe):
-        self.valor = valor
-        self.naipe = naipe
+NAIPES = list(Naipe)
+VALORES = list(Valores)
 
-    def __str__(self):
-        return f"{self.valor}{self.naipe}"
+baralho = [Carta(valor, naipe) for naipe in NAIPES for valor in VALORES]
 
-def imprimir_mao(mao):
-    for carta in mao:
-        print(str(carta), end=' ')
-    print()
+carta = Carta(Valores.AS, Naipe.OUROS)
+imprime_espaco_vazio(carta)
+
+
