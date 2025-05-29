@@ -41,6 +41,15 @@ class Carta:
         self.visivel = visivel
     def __repr__(self):
         return f"{self.valor.name}{self.naipe.value}"
+    
+    def valor_str(self):
+        mapa = {
+            Valores.AS: 'A',
+            Valores.VALETE: 'J',
+            Valores.DAMA: 'Q',
+            Valores.REI: 'K'
+        }
+        return mapa.get(self.valor, str(self.valor.value))
 
 ##class Carta(self, valor, naipe, visivel = True):
   ##  self.valor = valor
