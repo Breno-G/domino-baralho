@@ -1,10 +1,6 @@
 from enum import Enum
 
 ## ---- Criação das cartas ----
-class Cores(Enum):
-    RED = "\033[31m"
-    RESET = "\033[0m"
-
 class Naipe(Enum):
     COPAS = '♥'
     OUROS = '♦'
@@ -35,13 +31,11 @@ class Valores(Enum):
         return list(cls)[i]
     
 class Carta:
-    def __init__(self, valor, naipe, visivel = True):
+    def __init__(self, valor, naipe, visivel=True):
         self.valor = valor
         self.naipe = naipe
         self.visivel = visivel
-    def __repr__(self):
-        return f"{self.valor.name}{self.naipe.value}"
-    
+
     def valor_str(self):
         mapa = {
             Valores.AS: 'A',
@@ -51,8 +45,6 @@ class Carta:
         }
         return mapa.get(self.valor, str(self.valor.value))
 
-##class Carta(self, valor, naipe, visivel = True):
-  ##  self.valor = valor
-   ## self.naipe = naipe
-   ## self.visivel = visivel
+
+
 
