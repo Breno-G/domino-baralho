@@ -44,7 +44,3 @@ class Carta:
             Valores.REI: 'K'
         }
         return mapa.get(self.valor, str(self.valor.value))
-
-
-
-
