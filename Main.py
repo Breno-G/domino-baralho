@@ -1,19 +1,55 @@
-from carta import Carta, Naipe, Valores  # seus Enums
-from print_card_copy  import imprime_espacos_vazios
-from print_card_copy import imprime_carta_inteira
-from print_card_copy import imprime_pilha_empilhada
+from setup_game import Baralho, Jogador, Valores, Mesa
+from carta import Carta, Naipe
+from print_card import imprime_mesa_completa, imprime_mao_jogador
 
-NAIPES = list(Naipe)
-VALORES = list(Valores)
+class Jogo:
+    def __init__(self):
+        self.baralho = Baralho()
+        self.jogadores = [
+            Jogador("Você"),
+            Jogador("Bot 1"),
+            Jogador("Bot 2"),
+            Jogador("Bot 3")
+        ]
+        self.mesa = Mesa()
 
-baralho = [Carta(valor, naipe) for naipe in NAIPES for valor in VALORES]
+    def iniciar(self):
+        self.baralho.embaralhar()
+        maos = self.baralho.distribuir()
 
-carta = Carta(Valores.AS, Naipe.OUROS)
-#imprime_espacos_vazios()
-#imprime_carta_inteira(carta)
+        for i, jogador in enumerate(self.jogadores):
+            jogador.receber_cartas(maos[i])
+            jogador.mostrar_mao()
 
-pilha_exemplo = [Carta(valor, Naipe.ESPADAS) for valor in reversed(Valores)]
+        # Exibir estado inicial da mesa
+        from print_card import imprime_mesa_completa
+        print("\nEstado inicial da mesa (vazio):")
+        imprime_mesa_completa(self.mesa)
 
-imprime_pilha_empilhada(pilha_exemplo)
+        # Jogar 7 de Copas
+        carta = Carta(Valores.SETE, Naipe.COPAS)
+        self.mesa.jogar_carta(carta)
+        print(f"\n{carta.valor.name} de {carta.naipe.value} foi jogado na mesa.")
+        imprime_mesa_completa(self.mesa)
+
+        # Após mostrar as mãos
+        print("\nEstado inicial da mesa (vazio):")
+        imprime_mesa_completa(self.mesa)
+
+        # Exemplo: Jogador joga 7 de Copas
+        carta = Carta(Valores.SETE, Naipe.COPAS)
+        self.mesa.jogar_carta(carta)
+        print(f"\n{carta.valor.name} de {carta.naipe.value} foi jogado na mesa.")
+        imprime_mesa_completa(self.mesa)
+
         
-        
+
+        # Mostrar a mão do jogador humano
+        print("Sua mão:")
+        imprime_mao_jogador(self.jogadores[0].mao)
+
+    # (No futuro podemos adicionar lógica de turno com threads aqui)
+if __name__ == "__main__":
+    jogo = Jogo()
+    jogo.iniciar()
+
