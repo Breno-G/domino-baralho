@@ -1,6 +1,8 @@
 import random
 from carta import Carta, Naipe, Valores
 
+ORDEM_NAIPE = [Naipe.ESPADAS, Naipe.COPAS, Naipe.PAUS, Naipe.OUROS]
+
 class Baralho:
     def __init__(self):
         self.cartas = [Carta(valor, naipe) for naipe in Naipe for valor in Valores]
