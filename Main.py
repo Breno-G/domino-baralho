@@ -1,55 +1,59 @@
-from setup_game import Baralho, Jogador, Valores, Mesa
-from carta import Carta, Naipe
-from print_card import imprime_mesa_completa, imprime_mao_jogador
-
+import threading
+import time
+from setup_game import Baralho, Mesa
+from jogador import Jogador
+from bot import Bot
+from visual import imprime_estado
+ 
 class Jogo:
     def __init__(self):
         self.baralho = Baralho()
+        self.mesa = Mesa()
         self.jogadores = [
             Jogador("Você"),
-            Jogador("Bot 1"),
-            Jogador("Bot 2"),
-            Jogador("Bot 3")
+            Bot("Bot 1"),
+            Bot("Bot 2"),
+            Bot("Bot 3")
         ]
-        self.mesa = Mesa()
 
-    def iniciar(self):
+        self.turno = 0
+        self.lock = threading.Semaphore(1)
+        self.turno_cond = threading.Condition()
+
+    def distribuir_cartas(self):
         self.baralho.embaralhar()
-        maos = self.baralho.distribuir()
-
+        maos = self.baralho.distribuir(jogadores=4)
         for i, jogador in enumerate(self.jogadores):
             jogador.receber_cartas(maos[i])
-            jogador.mostrar_mao()
 
-        # Exibir estado inicial da mesa
-        from print_card import imprime_mesa_completa
-        print("\nEstado inicial da mesa (vazio):")
-        imprime_mesa_completa(self.mesa)
+    def executar_turno(self, id_jogador):
+        while True:
+            with self.turno_cond:
+                while self.turno != id_jogador:
+                    self.turno_cond.wait()
 
-        # Jogar 7 de Copas
-        carta = Carta(Valores.SETE, Naipe.COPAS)
-        self.mesa.jogar_carta(carta)
-        print(f"\n{carta.valor.name} de {carta.naipe.value} foi jogado na mesa.")
-        imprime_mesa_completa(self.mesa)
+                self.lock.acquire()
+                imprime_estado(self.mesa, self.jogadores[0], self.jogadores[1:])
 
-        # Após mostrar as mãos
-        print("\nEstado inicial da mesa (vazio):")
-        imprime_mesa_completa(self.mesa)
+                self.jogadores[id_jogador].jogar(self.mesa)
+                self.lock.release()
 
-        # Exemplo: Jogador joga 7 de Copas
-        carta = Carta(Valores.SETE, Naipe.COPAS)
-        self.mesa.jogar_carta(carta)
-        print(f"\n{carta.valor.name} de {carta.naipe.value} foi jogado na mesa.")
-        imprime_mesa_completa(self.mesa)
+                self.turno = (self.turno + 1) % 4
+                self.turno_cond.notify_all()
+                time.sleep(0.1)
 
-        
+    def iniciar(self):
+        self.distribuir_cartas()
 
-        # Mostrar a mão do jogador humano
-        print("Sua mão:")
-        imprime_mao_jogador(self.jogadores[0].mao)
+        threads = []
+        for id_jogador in range(4):
+            t = threading.Thread(target=self.executar_turno, args=(id_jogador,))
+            threads.append(t)
+            t.start()
 
-    # (No futuro podemos adicionar lógica de turno com threads aqui)
+        for t in threads:
+            t.join()
+
 if __name__ == "__main__":
     jogo = Jogo()
     jogo.iniciar()
-
