@@ -1,4 +1,8 @@
 from carta import Naipe, Valores, Carta
+from visual import cor_do_naipe, RESET
+from setup_game import ORDEM_NAIPE
+
+
 
 class Jogador:
     def __init__(self, nome):
@@ -10,18 +14,22 @@ class Jogador:
         self.organizar_mao()
 
     def organizar_mao(self):
-        ordem_naipe = [Naipe.ESPADAS, Naipe.COPAS, Naipe.PAUS, Naipe.OUROS]
-        self.mao.sort(key=lambda carta: (ordem_naipe.index(carta.naipe), -carta.valor.value))
+        self.mao.sort(key=lambda carta: (ORDEM_NAIPE.index(carta.naipe), -carta.valor.value))
 
     def jogar(self, mesa):
         while True:
             try:
+                opcoes = []
                 print("\nDigite 0 para passar a vez.")
-                print("Escolha o naipe:")
-                for idx, naipe in enumerate(Naipe):
-                    print(f"{idx+1} - {naipe.name}")
+                for idx, naipe in enumerate(ORDEM_NAIPE):
+                    cor = cor_do_naipe(naipe)
+                    opcao = f"{idx+1} {cor}{naipe.value}{RESET} {naipe.name} {cor}{naipe.value}{RESET} "
+                    opcoes.append(opcao)
+
+                print(" | ".join(opcoes))  # <-- agora exibe ANTES de pedir a entrada
+
                 escolha = int(input("Naipe: "))
-    
+
                 if escolha == 0:
                     print(f"{self.nome} passou a vez.")
                     return  # passa o turno
