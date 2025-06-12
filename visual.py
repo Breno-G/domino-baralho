@@ -2,8 +2,7 @@ import os
 from carta import Carta, Valores, Naipe
 from setup_game import Mesa
 from itertools import zip_longest
-from jogador import Jogador
-from itertools import zip_longest
+from setup_game import ORDEM_NAIPE
 
 # ANSI cores 
 RED = "\033[31m"
@@ -66,23 +65,16 @@ def gerar_carta_inteira(carta: Carta):
         "╰─────────╯"
     ]
 
-def gerar_espaco_carta(posicao):
-    total_linhas_da_pilha = 31
-
-    bloco_cabecalho = [
-        f"\033[31m╭─\033[0m╭─  ───  ─╮",
-        f"\033[31m│\033[0m            ",
-        f"\033[31m│\033[0m │         │",
-        f"\033[0m{posicao + 1}            ",
-        f"\033[31m│\033[0m │         │",
-        f"\033[31m│\033[0m            ",
-        f"\033[31m╰─\033[0m╰─  ───  ─╯"
+def gerar_espaco_carta():
+    return [
+        "╭─  ───  ─╮",
+        "           ",
+        "│         │",
+        "           ",
+        "│         │",
+        "           ",
+        "╰─  ───  ─╯"
     ]
-
-    linhas_vazias_cima = ["           "] * 12
-    linhas_vazias_baixo = ["           "] * 12
-
-    return linhas_vazias_cima + bloco_cabecalho + linhas_vazias_baixo
 
 
 
@@ -133,13 +125,6 @@ def gerar_pilha_completa(pilha: dict, naipe: Naipe):
                 linhas.extend(gerar_parcial_superior(carta))
             else:
                 linhas.extend(gerar_parcial_inferior(carta))
-        else:
-            if valor == Valores.SETE:
-                linhas.extend(gerar_bloco_vazio(7))
-            elif valor.value > 7:
-                linhas.extend(gerar_bloco_vazio(2))
-            else:
-                linhas.extend(gerar_bloco_vazio(2))
 
     return linhas
 
@@ -147,11 +132,11 @@ def gerar_pilha_completa(pilha: dict, naipe: Naipe):
 
 def imprime_mesa(mesa: Mesa): 
     colunas = []
-    for idx, naipe in enumerate(Naipe):
+    for idx, naipe in enumerate(ORDEM_NAIPE):
         pilha = mesa.pilhas[naipe]
 
         if pilha['central'] is None:
-            coluna = gerar_espaco_carta(idx)
+            coluna = gerar_espaco_carta()
         else:
             coluna = gerar_pilha_completa(pilha, naipe)
 
@@ -163,19 +148,15 @@ def imprime_mesa(mesa: Mesa):
         print("  ".join(linha))
 
 
-
-# Limpeza de tela
 def limpar_tela():
     os.system("cls" if os.name == "nt" else "clear")
 
-# Impressão dos bots
 def imprime_bots(bots):
     for bot in bots:
         quantidade = len(bot.mao)
         miniatura = '🂠 ' * quantidade
         print(f"{bot.nome}: {miniatura} ({quantidade} cartas)")
 
-# Impressão completa do estado atual do jogo
 def imprime_estado(mesa, jogador, bots):
     limpar_tela()
     imprime_mesa(mesa)
