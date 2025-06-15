@@ -1,4 +1,4 @@
-from setup import Jogo
+from setup_game import Jogo
 from visual import limpar_tela
 import time
 
