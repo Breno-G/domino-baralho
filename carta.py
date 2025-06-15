@@ -1,15 +1,10 @@
 from enum import Enum
 
-## ---- Criação das cartas ----
 class Naipe(Enum):
     COPAS = '♥'
     OUROS = '♦'
     ESPADAS = '♠'
     PAUS = '♣'
-    
-    @classmethod
-    def from_index(cls, i):
-        return list(cls)[i]
     
 class Valores(Enum):
     AS = 1
@@ -26,10 +21,6 @@ class Valores(Enum):
     DAMA = 12
     REI = 13    
 
-    @classmethod
-    def from_index(cls, i):
-        return list(cls)[i]
-    
 class Carta:
     def __init__(self, valor, naipe, visivel=True):
         self.valor = valor
@@ -45,6 +36,14 @@ class Carta:
         }
         return mapa.get(self.valor, str(self.valor.value))
 
+    def __repr__(self):
+        return f"{self.valor_str()}{self.naipe.value}"
+
+    def __eq__(self, other):
+        return isinstance(other, Carta) and self.valor == other.valor and self.naipe == other.naipe
+
+    def __hash__(self):
+        return hash((self.valor, self.naipe))
 
 
 
