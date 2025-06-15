@@ -1,45 +1,46 @@
 import random
-from enum import Enum
+from carta import Carta, Naipe, Valores
 
-# Enumeração para os naipes
-class Naipe(Enum):
-    PAUS = '♣'
-    OUROS = '♦'
-    COPAS = '♥'
-    ESPADAS = '♠'
+ORDEM_NAIPE = [Naipe.ESPADAS, Naipe.COPAS, Naipe.PAUS, Naipe.OUROS]
 
-# Classe que representa uma carta
-class Carta:
-    def __init__(self, valor: int, naipe: Naipe):
-        self.valor = valor
-        self.naipe = naipe
-
-    def __repr__(self):
-        nomes = {1: 'A', 11: 'J', 12: 'Q', 13: 'K'}
-        valor_str = nomes.get(self.valor, str(self.valor))
-        return f"{valor_str}{self.naipe.value}"
-
-# Classe que representa o estado geral do jogo
-class EstadoDoJogo:
+class Baralho:
     def __init__(self):
-        self.baralho = []
-        self.jogadores = [[] for _ in range(4)]  # 4 jogadores
+        self.cartas = [Carta(valor, naipe) for naipe in Naipe for valor in Valores]
 
-    def gerar_baralho(self):
-        """Cria um baralho completo com 52 cartas (1 a 13 de cada naipe)."""
-        self.baralho = [Carta(valor, naipe) for naipe in Naipe for valor in range(1, 14)]
+    def embaralhar(self):
+        random.shuffle(self.cartas)
+ 
+    def distribuir(self, jogadores: int = 4):
+        if len(self.cartas) % jogadores != 0:
+            raise ValueError("Não é possível dividir igualmente entre os jogadores.")
+        tamanho_mao = len(self.cartas) // jogadores
+        return [self.cartas[i * tamanho_mao:(i + 1) * tamanho_mao] for i in range(jogadores)]
 
-    def embaralhar_baralho(self):
-        """Embaralha o baralho aleatoriamente."""
-        random.shuffle(self.baralho)
+class Mesa:
+    def __init__(self):
+        self.pilhas = {naipe: {'acima': [], 'abaixo': [], 'central': None} for naipe in Naipe}
 
-    def distribuir_cartas(self):
-        """Distribui 13 cartas para cada jogador."""
-        for _ in range(13):
-            for jogador in self.jogadores:
-                carta = self.baralho.pop()
-                jogador.append(carta)
+    def jogar_carta(self, carta: Carta) -> bool:
+        pilha = self.pilhas[carta.naipe]
 
-    def mostrar_maos(self):
-        for i, mao in enumerate(self.jogadores):
-            print(f"Jogador {i+1}: {mao}")
+        if carta.valor == Valores.SETE:
+            if pilha['central'] is None:
+                pilha['central'] = carta
+                return True
+            return False
+
+        if pilha['central'] is None:
+            return False
+
+        if carta.valor.value > 7:
+            topo = pilha['acima'][0].valor.value if pilha['acima'] else 7
+            if carta.valor.value == topo + 1:
+                pilha['acima'].insert(0, carta)
+                return True
+        elif carta.valor.value < 7:
+            fundo = pilha['abaixo'][-1].valor.value if pilha['abaixo'] else 7
+            if carta.valor.value == fundo - 1:
+                pilha['abaixo'].append(carta)
+                return True
+
+        return False
