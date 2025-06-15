@@ -1,4 +1,7 @@
 from carta import Naipe, Valores, Carta
+from visual import cor_do_naipe, RESET
+import time
+import random
 
 class Bot:
     def __init__(self, nome):
@@ -7,15 +10,22 @@ class Bot:
 
     def receber_cartas(self, cartas):
         self.mao.extend(cartas)
-        self.organizar_mao()
 
-    def organizar_mao(self):
-        ordem_naipe = [Naipe.ESPADAS, Naipe.COPAS, Naipe.PAUS, Naipe.OUROS]
-        self.mao.sort(key=lambda carta: (ordem_naipe.index(carta.naipe), -carta.valor.value))
+    def jogar(self, mesa, jogo, bots = None):
+        time.sleep(random.uniform(0.5, 1.0)) 
 
-    def jogar(self, mesa):
+        for carta in self.mao:
+            if carta.valor == Valores.SETE:
+                if mesa.jogar_carta(carta):
+                    self.mao.remove(carta)
+                    jogo.verificar_fim_de_jogo()
+                    return carta
+
         for carta in self.mao:
             if mesa.jogar_carta(carta):
                 self.mao.remove(carta)
-                self.organizar_mao()
-                return
+                jogo.verificar_fim_de_jogo()
+                return carta
+
+        jogo.verificar_fim_de_jogo()
+        return None
