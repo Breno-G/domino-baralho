@@ -2,7 +2,6 @@ import time
 from .setup_game import Jogo
 from .visual import limpar_tela
 
-
 def mostrar_instrucoes():
     limpar_tela()
     print("\n==== INSTRUÇÕES ====")
@@ -30,16 +29,15 @@ def iniciar_partida():
             if resposta == 's':
                 break
             elif resposta == 'n':
-                return  # Volta para o menu principal
+                return 
             else:
                 print("Digite apenas 's' ou 'n'.")
 
 def menu():
     while True:
         limpar_tela()
-        time.sleep(0.5)  # pequeno delay dramático
-
-        # Logo principal (mantive seu original)
+        time.sleep(0.5)
+        
         print("""       
 
 ██████╗░░█████╗░███╗░░░███╗██╗███╗░░██╗░█████╗░  ██████╗░███████╗
