@@ -13,6 +13,25 @@ class Jogador:
 
     def organizar_mao(self):
         self.mao.sort(key=lambda carta: (ORDEM_NAIPE.index(carta.naipe), -carta.valor.value))
+        
+    def tem_jogada_valida(self, mesa):
+        for carta in self.mao:
+            pilha = mesa.pilhas[carta.naipe]
+            centro = pilha['central']
+
+            if centro is None:
+                if carta.valor.value == 7:
+                    return True
+            else:
+                if carta.valor.value > 7:
+                    topo = pilha['acima'][0].valor.value if pilha['acima'] else 7
+                    if carta.valor.value == topo + 1:
+                        return True
+                elif carta.valor.value < 7:
+                    fundo = pilha['abaixo'][-1].valor.value if pilha['abaixo'] else 7
+                    if carta.valor.value == fundo - 1:
+                        return True
+        return False
 
     def jogar(self, mesa, jogo, bots):
         while True:
@@ -34,6 +53,8 @@ class Jogador:
                     return None
 
                 if escolha == 0:
+                    if self.tem_jogada_valida(mesa):
+                        raise ValueError("Você tem jogadas possíveis! Não pode passar a vez.")
                     print(f"{self.nome} passou a vez.")
                     return None
 
