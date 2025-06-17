@@ -3,12 +3,9 @@ from .carta import Carta, Valores, Naipe
 from .entidades import Mesa, ORDEM_NAIPE
 from itertools import zip_longest
 
-
-# ANSI cores 
 RED = "\033[31m"
 RESET = "\033[0m"
 
-# Aplica cor dependendo do naipe
 def cor_do_naipe(naipe):
     return RED if naipe in [Naipe.COPAS, Naipe.OUROS] else ""
 
@@ -17,7 +14,6 @@ def gerar_bloco_vazio(linhas):
         "           "
     ]
 
-# Gera laterais para cartas empilhadas
 def gerar_lateral_esquerda(carta: Carta):
     cor = cor_do_naipe(carta.naipe)
     valor = carta.valor_str()
@@ -76,7 +72,6 @@ def gerar_espaco_carta():
         "╰─  ───  ─╯"
     ]
 
-
 def imprime_mao_jogador(mao: list[Carta]):
     if not mao:
         print("\nSua mão está vazia! (0 cartas)\n")
@@ -133,8 +128,6 @@ def gerar_pilha_completa(pilha: dict, naipe: Naipe):
 
     return linhas
 
-
-
 def imprime_mesa(mesa: Mesa): 
     colunas = []
     for idx, naipe in enumerate(ORDEM_NAIPE):
@@ -152,7 +145,6 @@ def imprime_mesa(mesa: Mesa):
     for linha in linhas:
         print("  ".join(linha))
 
-
 def limpar_tela():
     os.system("cls" if os.name == "nt" else "clear")
 
@@ -167,5 +159,3 @@ def imprime_estado(mesa, jogador, bots):
     imprime_mesa(mesa)
     imprime_bots(bots)
     imprime_mao_jogador(jogador.mao)
-
-
